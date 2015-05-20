@@ -24,26 +24,25 @@
         var infowindow = new google.maps.InfoWindow();
  
          
-        function init() {
+        function init(search) {
              
             var mapOptions = {
                 zoom: 13,
                 center: center,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             }
-             
             map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-
-            makeRequest('get_locations.php', function(data) {
+            makeRequest('get_locations.php/?s='+search+'', function(data) {
              var data = JSON.parse(data.responseText);
              for (var i = 0; i < data.length; i++) {
               displayLocation(data[i]);
             }
           });
-             
+
            
         }
 
+        
      function displayLocation(location) {
          
     var content =   '<div class="infoWindow"><strong>'  + location.name + '</strong>'
@@ -81,8 +80,9 @@
     }
 }
 
-        function makeRequest(url, callback) {
-    var request;
+function makeRequest(url, callback){
+ var request;
+ var request;
     if (window.XMLHttpRequest) {
         request = new XMLHttpRequest(); // IE7+, Firefox, Chrome, Opera, Safari
     } else {
@@ -96,11 +96,36 @@
     request.open("GET", url, true);
     request.send();
 }
+/*
+        function makeRequest(url, callback) {
+    var request;
+    if (window.XMLHttpRequest) {
+        request = new XMLHttpRequest(); // IE7+, Firefox, Chrome, Opera, Safari
+    } else {
+        request = new ActiveXObject("Microsoft.XMLHTTP"); // IE6, IE5
+    }
+    request.onreadystatechange = function() {
+        if (request.readyState == 4 && request.status == 200) {
+            callback(request);
+        }
+    }
+    request.open("GET", "get_locations.php?q"+str, true);
+    request.send();
+}*/
 
         //]]>
+
+        function search(){
+          
+          // if(q.keyCode == 13){
+            var search = document.getElementById("search").value;
+            // alert(search);
+            init(search);
+          // }
+        }
         </script>
     </head>
-    <body onload="init();">
+    <body onload="init('');">
          
         <h1>Places to check out in Zagreb</h1>
          
@@ -109,6 +134,7 @@
         </section>
          
         <section id="main">
+            <input type="text" id="search" onkeydown="if(event.keyCode == 13){search();}">
             <div id="map_canvas" style="width: 70%; height: 500px;"></div>
         </section>
          
